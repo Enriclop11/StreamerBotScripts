@@ -9,10 +9,13 @@ public class CPHInline {
 
         string spotifyRefreshToken = CPH.GetGlobalVar<string>("spotifyRefreshToken");
         string spotifyId = CPH.GetGlobalVar<string>("spotifyId");
+        string spotifySecret = CPH.GetGlobalVar<string>("spotifyKey");
 
         string scope = "user-read-private user-read-email user-read-playback-state user-modify-playback-state user-read-currently-playing";
 
         HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(spotifyId + ":" + spotifySecret)));
+
 
         var values = new Dictionary<string, string>
         {
@@ -31,16 +34,20 @@ public class CPHInline {
             dynamic json = JsonConvert.DeserializeObject(responseBody);
 
             string token = json.access_token;
-            string refreshToken = json.refresh_token;
+            string expiresIn = json.expires_in;
+
+            DateTime expirationTime = DateTime.Now.AddSeconds(Convert.ToDouble(expiresIn));
 
             // Set in global var
             CPH.SetGlobalVar("spotifyToken", token);
-            CPH.SetGlobalVar("spotifyRefreshToken", refreshToken);
+            CPH.SetGlobalVar("spotifyExpirationTime", expirationTime.ToString());
 
             CPH.LogDebug("Token: " + token);
+            
         }
         else
         {
+            CPH.SendMessage("Token refresh failed" + response.StatusCode);
             CPH.LogError("The request to the spotify API failed");
             return false;
         }
