@@ -9,12 +9,10 @@ public class CPHInline
 		//Trigger the userTalk event when the user is pakuu27 CPH.TriggerCodeEvent("userTalk");
 		string userName = CPH.TryGetArg("userName", out string user) ? user : "User";
 
-		Console.WriteLine($"{userName} is talking to you!");
-		if(userName == "pakuu27"){
-			CPH.TriggerCodeEvent("userTalk");
-		}
-
-		if (userName == "enriclop11")
+		//get list of users that can talk, global var string with the users separated by commas
+		string users = CPH.GetGlobalVar<string>("usersTalkTrigger");
+		string[] usersArray = users.Split(',');
+		if (Array.Exists(usersArray, element => element == userName))
 		{
 			CPH.TriggerCodeEvent("userTalk");
 		}
