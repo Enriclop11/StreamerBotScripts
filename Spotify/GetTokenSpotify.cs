@@ -11,34 +11,17 @@ public class CPHInline
         string spotifySecret = CPH.GetGlobalVar<string>("spotifyKey");
         string spotifyId = CPH.GetGlobalVar<string>("spotifyId");
 
-        /*
-        var client_id = 'CLIENT_ID';
-var client_secret = 'CLIENT_SECRET';
+        // Get arg spotfyCode
+        string spotifyCode = CPH.TryGetArg("spotifyCode", out string code) ? code : "Code";
 
-var authOptions = {
-  url: 'https://accounts.spotify.com/api/token',
-  headers: {
-    'Authorization': 'Basic ' + (new Buffer.from(client_id + ':' + client_secret).toString('base64'))
-  },
-  form: {
-    grant_type: 'client_credentials'
-  },
-  json: true
-};
-
-request.post(authOptions, function(error, response, body) {
-  if (!error && response.statusCode === 200) {
-    var token = body.access_token;
-  }
-});
-    }
-        */
         HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(spotifyId + ":" + spotifySecret)));
 
         var values = new Dictionary<string, string>
         {
-            { "grant_type", "client_credentials" }
+            { "grant_type", "authorization_code" },
+            { "code", spotifyCode },
+            { "redirect_uri", "http://localhost:8888/callback" }
         };
 
         var content = new FormUrlEncodedContent(values);
@@ -51,9 +34,16 @@ request.post(authOptions, function(error, response, body) {
             dynamic json = JsonConvert.DeserializeObject(responseBody);
 
             string token = json.access_token;
+            string refreshToken = json.refresh_token;
+            string expiresIn = json.expires_in;
 
-            // Set in argument
-            CPH.SetArgument("spotifyToken", token);
+            //calculate the expiration time
+            DateTime expirationTime = DateTime.Now.AddSeconds(Convert.ToDouble(expiresIn));
+
+            // Set in global var
+            CPH.SetGlobalVar("spotifyToken", token);
+            CPH.SetGlobalVar("spotifyRefreshToken", refreshToken);
+            CPH.SetGlobalVar("spotifyExpirationTime", expirationTime.ToString());
 
             CPH.LogDebug("Token: " + token);
         }
