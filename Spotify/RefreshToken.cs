@@ -11,31 +11,6 @@ public class CPHInline {
         string spotifyId = CPH.GetGlobalVar<string>("spotifyId");
 
         string scope = "user-read-private user-read-email user-read-playback-state user-modify-playback-state user-read-currently-playing";
-        /*
-          const getRefreshToken = async () => {
-
-   // refresh token that has been previously stored
-   const refreshToken = localStorage.getItem('refresh_token');
-   const url = "https://accounts.spotify.com/api/token";
-
-    const payload = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken,
-        client_id: clientId
-      }),
-    }
-    const body = await fetch(url, payload);
-    const response await body.json();
-
-    localStorage.setItem('access_token', response.accessToken);
-    localStorage.setItem('refresh_token', response.refreshToken);
-  }
-        */
 
         HttpClient client = new HttpClient();
 
