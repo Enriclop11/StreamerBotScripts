@@ -22,6 +22,8 @@ public class CPHInline
             TwitchUserInfoEx broadcaster = CPH.TwitchGetExtendedUserInfoById(userID);
             string game = broadcaster.Game;
 
+            CPH.SetGlobalVar("currentGame", game);
+
             //get the json list games of steam http://api.steampowered.com/ISteamApps/GetAppList/v0002/
             string url = "http://api.steampowered.com/ISteamApps/GetAppList/v0002/";
             
@@ -75,15 +77,18 @@ public class CPHInline
 
                     if (total > 0)
                     {
-                        double percent = (unlocked * 100) / total;
+
+                        //double percent = (unlocked * 100) / total;
+                        // set user var
+                        string percent = unlocked + "/" + total;
                         CPH.SetGlobalVar("steamAchievements" + game, percent);
                         // send message showing the unlocked/total and the percent
-                        CPH.SendMessage("Achievements unlocked: " + unlocked + "/" + total + " (" + percent + "%)");
+                        //CPH.SendMessage("Achievements unlocked: " + unlocked + "/" + total + " (" + percent + "%)");
                     }
                 } else {
                     //don't have achievements
-                    CPH.SetGlobalVar("steamAchievements" + game, 0);
-                    CPH.SendMessage("Game " + game + " don't have achievements");
+                    string percent = "0";
+                    CPH.SetUserVar("steamAchievements", game, percent);
                 }
             }
 
