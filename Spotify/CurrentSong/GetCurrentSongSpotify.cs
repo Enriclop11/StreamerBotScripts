@@ -34,7 +34,13 @@ public class CPHInline
       string albumName = json.item.album.name;
       string albumImage = json.item.album.images[0].url;
 
-      CPH.SendMessage("Song: " + songName + " Artist: " + artistName);
+      //CPH.SendMessage("Song: " + songName + " Artist: " + artistName);
+
+      //Set the variables in the arguments
+      CPH.SetArgument("songName", songName);
+      CPH.SetArgument("artistName", artistName);
+      CPH.SetArgument("albumName", albumName);
+      CPH.SetArgument("albumImage", albumImage);
     }
     else
     {
