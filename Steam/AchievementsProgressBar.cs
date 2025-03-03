@@ -24,6 +24,7 @@ public class CPHInline {
         //Get the variable currentGame and achievements
         string currentGame = CPH.GetGlobalVar<string>("currentGame");
         string achievements = CPH.GetGlobalVar<string>("steamAchievements" + currentGame);
+        string steamGameId = CPH.TryGetArg<string>("steamGameId", out var steamGameIdArg) ? steamGameIdArg : "";
 
         //If the user has no achievements, set it to 0
         if (achievements == null)
@@ -49,12 +50,16 @@ public class CPHInline {
         percent = Math.Round(percent, 2);
         int pixelsPercent = (int)percent * 4;
 
+        string urlImage = "https://cdn.cloudflare.steamstatic.com/steam/apps/" + steamGameId + "/capsule_616x353.jpg";
+
         var map = new Dictionary<string, string>
         {
             { "{{percent}}", percent.ToString() },
             { "{{pixelsPercent}}", pixelsPercent.ToString() },
             { "{{unlocked}}", unlocked },
-            { "{{total}}", total }
+            { "{{total}}", total },
+            { "{{game}}", currentGame} ,
+            { "{{urlImage}}", urlImage}
         };
 
         //If a file achivementsBarCustom.html exists, use it and change the variables with its values

@@ -49,9 +49,12 @@ public class CPHInline
 
             if (steamGameId == "")
             {
-                CPH.SendMessage("Game not found on Steam");
+                //CPH.SendMessage("The game is not on steam");
                 //Check the game on xbox 
             } else {
+
+                CPH.SetArgument("steamGameId", steamGameId);
+
                 //get the actual achievements of the game
                 url = "http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?appid=" + steamGameId + "&key=" + steamKey + "&steamid=" + steamUserId;
                 response = client.GetAsync(url).Result;
@@ -77,18 +80,13 @@ public class CPHInline
 
                     if (total > 0)
                     {
-
-                        //double percent = (unlocked * 100) / total;
-                        // set user var
                         string percent = unlocked + "/" + total;
                         CPH.SetGlobalVar("steamAchievements" + game, percent);
-                        // send message showing the unlocked/total and the percent
-                        //CPH.SendMessage("Achievements unlocked: " + unlocked + "/" + total + " (" + percent + "%)");
+
                     }
                 } else {
                     //don't have achievements
                     string percent = "0";
-                    CPH.SetUserVar("steamAchievements", game, percent);
                 }
             }
 
@@ -96,7 +94,7 @@ public class CPHInline
         }
         catch (Exception e)
         {
-            CPH.SendMessage("Error: " + e.Message);
+            CPH.LogError("Error: " + e.Message);
             return false;
         }
 	}
